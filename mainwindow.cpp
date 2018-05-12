@@ -118,10 +118,12 @@ void MainWindow::clickedslot(int buttonnum)
 {
     set_iniColor();
     constbuttonnum = buttonnum;
+
+    QPalette buttonstatus;
+    buttonstatus.setColor(QPalette::Button, QColor(Qt::darkCyan));
+
     if(su_status.getElement(buttonnum)!=1)
     {
-        QPalette buttonstatus;
-        buttonstatus.setColor(QPalette::Button, QColor(Qt::darkCyan));
         button[buttonnum]->setPalette(buttonstatus);
         color = true;
     }
@@ -144,9 +146,11 @@ void MainWindow::lebu_clickedslot(int lebunum)
     }
 
     set_iniColor();
-    QPalette levelstatus;
+    QPalette levelstatus, inistatus;
     levelstatus.setColor(QPalette::Button, QColor(Qt::yellow));
+    inistatus.setColor(QPalette::Button, QColor(Qt::white));
     levelbu[lebunum]->setPalette(levelstatus);
+    setbu[0]->setPalette(inistatus);
 
     if (lebunum == 0)
     {
@@ -351,6 +355,7 @@ void MainWindow::startslot()
     setstatus.setColor(QPalette::Button, QColor(Qt::blue));
     warn.setColor(QPalette::Button, QColor(Qt::red));
     correct.setColor(QPalette::Button, QColor(Qt::green));
+
     ansbu[0]->setPalette(inistatus);
     ansbu[0]->setText("Check");
     setbu[0]->setPalette(setstatus);
@@ -383,10 +388,24 @@ void MainWindow::startslot()
 
 void MainWindow::restartslot()
 {
+    gamestatus = false;
+
+    //Setup the whole map and button to 0
+    zero_map[81] = 0;
+    su.SetMap(zero_map);
+    for(int i=0; i<81; ++i)
+    {
+        button[i]->setText("");
+        su_status.setElement(i,0);
+    }
+
     set_iniColor();
-    QPalette setstatus;
+    QPalette setstatus,inistatus;
     setstatus.setColor(QPalette::Button, QColor(Qt::blue));
+    inistatus.setColor(QPalette::Button, QColor(Qt::white));
+    setbu[0]->setPalette(inistatus);
     setbu[1]->setPalette(setstatus);
+    levelbu[constlebunum]->setPalette(inistatus);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -478,7 +497,8 @@ void MainWindow::set_iniColor()
 
      for(int i=0; i<6; ++i)
      {
-         levelbu[i]->setPalette(pal);
+         if(i!=constlebunum)
+            levelbu[i]->setPalette(pal);
      }
 
      for(int i=0;i<2;i++)
@@ -492,9 +512,5 @@ void MainWindow::set_iniColor()
          ansbu[0]->setText("Check");
      }
 
-     for(int i=0; i<2; ++i)
-     {
-         setbu[i]->setPalette(pal);
-         gamestatus = false;
-     }
+     setbu[1]->setPalette(pal);
  }
