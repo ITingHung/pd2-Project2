@@ -103,10 +103,10 @@ MainWindow::MainWindow(QWidget *parent) :
         setbu[i]->setFont(font);
     }
     setbu[0]->setText("Start");
-    setbu[1]->setText("Stop");
+    setbu[1]->setText("Re-Start");
 
     connect(setbu[0], SIGNAL(clicked()), this, SLOT(startslot()));
-    connect(setbu[1], SIGNAL(clicked()), this, SLOT(stopslot()));
+    connect(setbu[1], SIGNAL(clicked()), this, SLOT(restartslot()));
 }
 
 MainWindow::~MainWindow()
@@ -130,19 +130,23 @@ void MainWindow::clickedslot(int buttonnum)
 void MainWindow::lebu_clickedslot(int lebunum)
 {
     constlebunum = lebunum;
-    if (lebunum != 5)
-    customize = false;
 
-    //Setup the whole map tp 0
+    if (lebunum != 5)
+        customize = false;
+
+    //Setup the whole map and button to 0
     zero_map[81] = 0;
     su.SetMap(zero_map);
     for(int i=0; i<81; ++i)
+    {
         button[i]->setText("");
+        su_status.setElement(i,0);
+    }
 
+    set_iniColor();
     QPalette levelstatus;
     levelstatus.setColor(QPalette::Button, QColor(Qt::yellow));
     levelbu[lebunum]->setPalette(levelstatus);
-    set_iniColor();
 
     if (lebunum == 0)
     {
@@ -377,12 +381,11 @@ void MainWindow::startslot()
     }
 }
 
-void MainWindow::stopslot()
+void MainWindow::restartslot()
 {
-    QPalette inistatus,setstatus;
-    inistatus.setColor(QPalette::Button, QColor(Qt::white));
+    set_iniColor();
+    QPalette setstatus;
     setstatus.setColor(QPalette::Button, QColor(Qt::blue));
-    setbu[0]->setPalette(inistatus);
     setbu[1]->setPalette(setstatus);
 }
 
@@ -475,8 +478,7 @@ void MainWindow::set_iniColor()
 
      for(int i=0; i<6; ++i)
      {
-         if(i!=constlebunum)
-            levelbu[i]->setPalette(pal);
+         levelbu[i]->setPalette(pal);
      }
 
      for(int i=0;i<2;i++)

@@ -18,7 +18,6 @@ public:
     void runKernel(int curr_n, int total_n,vector<int>& row_list, vector<int>& col_list);
     int get_empty_num(vector<int>& row_list, vector<int>& col_list);
     static const int sudokuSize = 81;
-    ~Sudoku();
 
 private:
     bool checkUnity(int arr[]);

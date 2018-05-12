@@ -42,7 +42,7 @@ public slots:
     void checkslot();
     void showansslot();
     void startslot();
-    void stopslot();
+    void restartslot();
 
 private slots:
 

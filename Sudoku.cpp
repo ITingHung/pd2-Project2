@@ -14,9 +14,6 @@ Sudoku::Sudoku()
         map[i] = 0;
 }
 
-Sudoku::~Sudoku()
-{}
-
 void Sudoku::SetMap(const int set_map[])
 {
     for(int i=0; i<sudokuSize; ++i)
@@ -86,7 +83,7 @@ bool Sudoku::check_and_generate_info()
 {
     clearVec();
     finish = false;
-    for (int i=0; i<9; ++i)
+
     // row
     for (int i=0; i<9; ++i)
     {
