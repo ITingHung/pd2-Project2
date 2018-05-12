@@ -14,6 +14,9 @@ Sudoku::Sudoku()
         map[i] = 0;
 }
 
+Sudoku::~Sudoku()
+{}
+
 void Sudoku::SetMap(const int set_map[])
 {
     for(int i=0; i<sudokuSize; ++i)
@@ -115,6 +118,9 @@ bool Sudoku::solve(Sudoku question,Sudoku &answer)
 
 bool Sudoku::check_and_generate_info()
 {
+    clearVec();
+    finish = false;
+    for (int i=0; i<9; ++i)
     // row
     for (int i=0; i<9; ++i)
     {
@@ -155,8 +161,7 @@ bool Sudoku::check_and_generate_info()
                 return false;
             check[value] = true;
         }
-
-        for (int j=0; j<9; j++)
+        for (int j=0; j<9; ++j)
         {
             if (!check[j])
                 col_vec[i].push_back(j+1);
@@ -190,6 +195,16 @@ bool Sudoku::check_and_generate_info()
     return true;
 }
 
+void Sudoku::clearVec()
+{
+    for (int i=0; i<9; ++i)
+    {
+        row_vec[i].clear();
+        col_vec[i].clear();
+        block_vec[i].clear();
+    }
+}
+
 vector<int> Sudoku::find_same_num(vector<int>& row_v,vector<int>& col_v,vector<int>& block_v)
 {
     vector<int> result;
@@ -197,15 +212,16 @@ vector<int> Sudoku::find_same_num(vector<int>& row_v,vector<int>& col_v,vector<i
     bool r[9] = {false};
     bool c[9] = {false};
     bool b[9] = {false};
+
     //Set the status of candidate number to true
-    for (int i = 0; i < row_v.size(); i++)
-        r[row_v[i] - 1] = true;
-    for (int i = 0; i < col_v.size(); i++)
+    for (int i=0; i<(int)row_v.size(); i++)
+            r[row_v[i] - 1] = true;
+    for (int i=0; i<(int)col_v.size(); i++)
         c[col_v[i] - 1] = true;
-    for (int i = 0; i < block_v.size(); i++)
+    for (int i=0; i<(int)block_v.size(); i++)
         b[block_v[i] - 1] = true;
 
-    for (int i = 0; i < 9; i++)
+    for (int i=0; i<9; i++)
     {
         //Save the row+column+block candidate number into result
         if (r[i] && c[i] && b[i])
@@ -257,7 +273,7 @@ void Sudoku::runKernel(int curr_n, int total_n, vector<int>& row_list, vector<in
     if (candidates.size() == 0)
         return;
 
-    for (int i = 0; i < candidates.size(); i++)
+    for (int i = 0; i < (int)candidates.size(); i++)
     {
         int value = candidates[i];
         vector<int>::iterator iter;

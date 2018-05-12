@@ -36,7 +36,6 @@ public:
     ~MainWindow();
 
     void keyPressEvent(QKeyEvent *event);
-    void setBuEle(int buttonnum, QString numshow);
 
 public slots:
     void clickedslot(int buttonnum);
@@ -50,6 +49,9 @@ private slots:
 
 private:
     void set_iniColor();
+    void setBuEle(int buttonnum, QString numshow);
+    void random();
+    void adjustBuMap();
     Ui::MainWindow *ui;
     QPushButton *button[81];
     QPushButton *levelbu[6];

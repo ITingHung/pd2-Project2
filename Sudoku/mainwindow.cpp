@@ -6,10 +6,13 @@
 
 Sudoku su;
 Sudoku su_status;
+Sudoku tempomap;
 int constbuttonnum;
+int constlebunum;
 bool color = false;
-int zero_map[81];
+bool gamestatus = false;
 bool customize = false;
+int zero_map[81];
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -126,26 +129,19 @@ void MainWindow::clickedslot(int buttonnum)
 
 void MainWindow::lebu_clickedslot(int lebunum)
 {
+    constlebunum = lebunum;
     customize = false;
 
     //Setup the whole map tp 0
-    for(int i=0; i<81; ++i)
-    {
-        zero_map[i] = 0;
-        button[i]->setText("");
-        su_status.setElement(i,0);
-    }
+    zero_map[81] = 0;
     su.SetMap(zero_map);
+    for(int i=0; i<81; ++i)
+        button[i]->setText("");
 
-    //Set up the level button status
     QPalette levelstatus;
-    levelstatus.setColor(QPalette::Button, QColor(Qt::white));
-    for(int i=0; i<5; ++i)
-    {
-        levelbu[i]->setPalette(levelstatus);
-    }
     levelstatus.setColor(QPalette::Button, QColor(Qt::yellow));
     levelbu[lebunum]->setPalette(levelstatus);
+    set_iniColor();
 
     if (lebunum == 0)
     {
@@ -182,6 +178,18 @@ void MainWindow::lebu_clickedslot(int lebunum)
         setBuEle(64,"4");setBuEle(71,"8");
         setBuEle(73,"6");setBuEle(75,"8");setBuEle(78,"2");setBuEle(81,"3");
     }
+    if (lebunum == 3)
+    {
+        setBuEle(5,"7");setBuEle(6,"8");setBuEle(8,"4");
+        setBuEle(10,"2");setBuEle(12,"5");setBuEle(13,"9");setBuEle(16,"7");
+        setBuEle(21,"6");
+        setBuEle(28,"6");setBuEle(33,"7");setBuEle(35,"2");setBuEle(36,"4");
+        setBuEle(37,"7");setBuEle(41,"3");setBuEle(45,"5");
+        setBuEle(46,"3");setBuEle(47,"5");setBuEle(49,"2");setBuEle(54,"9");
+        setBuEle(61,"6");
+        setBuEle(66,"1");setBuEle(69,"2");setBuEle(70,"4");setBuEle(72,"3");
+        setBuEle(74,"3");setBuEle(76,"8");setBuEle(77,"5");
+    }
     if (lebunum == 4)
     {
         setBuEle(2,"9"); setBuEle(6,"5");setBuEle(7,"6");setBuEle(8,"1");setBuEle(9,"3");
@@ -198,58 +206,132 @@ void MainWindow::lebu_clickedslot(int lebunum)
     {
         customize = true;
     }
+
+    if (lebunum!=5)
+        random();
 }
 
 void MainWindow::setBuEle(int buttonnum, QString numshow)
 {
-    QFont font;
-    font.setPointSize(25);
-    font.setBold(true);
-    button[buttonnum-1]->setFont(font);
-
     int numinsu = numshow.toInt();
     su.setElement(buttonnum-1,numinsu);
-    su_status.setElement(buttonnum-1,1);
-    button[buttonnum-1]->setText(numshow);
+}
+
+void MainWindow::adjustBuMap()
+{
+    QFont font, ini_font;
+    font.setPointSize(25);
+    font.setBold(true);
+    ini_font.setPointSize(20);
+    ini_font.setBold(false);
+
+    for(int i=0; i<81; ++i)
+    {
+        su.setElement(i,tempomap.getElement(i));
+
+        if(su.getElement(i)!=0)
+        {
+            button[i]->setText(QString::number(su.getElement(i)));
+            button[i]->setFont(font);
+            su_status.setElement(i,1);
+        }
+        else
+        {
+            button[i]->setText("");
+            button[i]->setFont(ini_font);
+            su_status.setElement(i,0);
+        }
+    }
+}
+
+void MainWindow::random()
+{
+    //Random adjust the question
+    int randomnum = qrand()%3;
+    switch(randomnum)
+    {
+    case 0:
+        for(int i=0; i<81; ++i)
+        {
+           tempomap.setElement(i,su.getElement(i));
+        }
+        break;
+    case 1:
+        for(int i=0; i<27; ++i)
+        {
+           tempomap.setElement(i+27,su.getElement(i));
+           tempomap.setElement(i+54,su.getElement(i+27));
+           tempomap.setElement(i,su.getElement(i+54));
+        }
+        break;
+    case 2:
+        for(int i=0; i<27; ++i)
+        {
+           tempomap.setElement(i+54,su.getElement(i));
+           tempomap.setElement(i,su.getElement(i+27));
+           tempomap.setElement(i+27,su.getElement(i+54));
+        }
+        break;
+    }
+    adjustBuMap();
 }
 
 void MainWindow::checkslot()
 {
-    QPalette pal;
-    if(su.isCorrect())
+    if(gamestatus)
     {
-       pal.setColor(QPalette::Button, QColor(Qt::green));
-       ansbu[0]->setPalette(pal);
-       ansbu[0]->setText("Correct");
-    }
-    else
-    {
-        pal.setColor(QPalette::Button, QColor(Qt::red));
-        ansbu[0]->setPalette(pal);
-        ansbu[0]->setText("Incorrect");
-    }
+        QPalette pal;
+        if(su.isCorrect())
+        {
+           pal.setColor(QPalette::Button, QColor(Qt::green));
+           ansbu[0]->setPalette(pal);
+           ansbu[0]->setText("Correct");
+        }
+        else
+        {
+            pal.setColor(QPalette::Button, QColor(Qt::red));
+            ansbu[0]->setPalette(pal);
+            ansbu[0]->setText("Incorrect");
+        }
 
+    }
 }
 
 void MainWindow::showansslot()
 {
-    //Noice:if user key in the wrong number
-    if(su.check_and_generate_info())
+    if(gamestatus)
     {
-        vector<int> empty_row_list;
-        vector<int> empty_col_list;
-        int unknown_num = su.get_empty_num(empty_row_list, empty_col_list);
-        su.runKernel(0, unknown_num, empty_row_list, empty_col_list);
+        QPalette pal;
+        pal.setColor(QPalette::Button, QColor(Qt::cyan));
+        ansbu[1]->setPalette(pal);
 
-        QFont font;
-        font.setPointSize(20);
-
-        for (int i=0; i<81; ++i)
+        for(int i=0; i<81; ++i)
         {
-            if(!su_status.getElement(i))
+            if(su_status.getElement(i)==0)
             {
-                button[i]->setText(QString::number(su.getElement(i)));
-                button[i]->setFont(font);
+                su.setElement(i,0);
+                button[i]->setText("");
+            }
+        }
+
+        if(su.check_and_generate_info())
+        {
+            vector<int> empty_row_list;
+            vector<int> empty_col_list;
+            int unknown_num = su.get_empty_num(empty_row_list, empty_col_list);
+            su.runKernel(0, unknown_num, empty_row_list, empty_col_list);
+
+            QFont font;
+            font.setPointSize(20);
+            font.setBold(false);
+
+            for (int i=0; i<81; ++i)
+            {
+                if(su_status.getElement(i)==0)
+                {
+                    button[i]->setText(QString::number(su.getElement(i)));
+                    button[i]->setFont(font);
+                }
             }
         }
     }
@@ -257,6 +339,8 @@ void MainWindow::showansslot()
 
 void MainWindow::startslot()
 {
+    gamestatus = true;
+
     QPalette inistatus,setstatus,warn,correct;
     inistatus.setColor(QPalette::Button, QColor(Qt::white));
     setstatus.setColor(QPalette::Button, QColor(Qt::blue));
@@ -272,6 +356,7 @@ void MainWindow::startslot()
     {
         if(!su.check_and_generate_info())
         {
+            gamestatus = false;
             custobu[0]->setPalette(inistatus);
             custobu[1]->setPalette(warn);
             setbu[0]->setPalette(inistatus);
@@ -366,7 +451,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
 }
 
- void MainWindow::set_iniColor()
+void MainWindow::set_iniColor()
  {
      QPalette pal;
      pal.setColor(QPalette::Button, QColor(Qt::white));
@@ -387,5 +472,22 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
              button[constbuttonnum]->setPalette(pal);
          }
      }
- }
 
+     for(int i=0; i<5; ++i)
+     {
+         if(i!=constlebunum)
+            levelbu[i]->setPalette(pal);
+     }
+
+     for(int i=0; i<2; ++i)
+     {
+         ansbu[i]->setPalette(pal);
+         ansbu[0]->setText("Check");
+     }
+
+     for(int i=0; i<2; ++i)
+     {
+         setbu[i]->setPalette(pal);
+         gamestatus = false;
+     }
+ }
