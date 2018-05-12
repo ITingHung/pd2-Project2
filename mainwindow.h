@@ -17,7 +17,6 @@
 #include <QFont>
 
 #include "Sudoku.h"
-#include "buttonwidget.h"
 
 namespace Ui {
 class MainWindow;

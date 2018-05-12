@@ -33,14 +33,6 @@ void Sudoku::setElement(int index, int value)
     map[index] = value;
 }
 
-int Sudoku::getFirstZeroIndex()
-{
-    for(int i=0; i<sudokuSize; ++i)
-        if(map[i]==0)
-            return i;
-    return -1;
-}
-
 bool Sudoku::checkUnity(int arr[])
 {
     int arr_unity[9];
@@ -88,32 +80,6 @@ bool Sudoku::isCorrect()
             return false;
     }
     return true;
-}
-
-bool Sudoku::solve(Sudoku question,Sudoku &answer)
-{
-    int firstZero;
-    firstZero = question.getFirstZeroIndex();
-    if(firstZero == -1)
-    {
-        if(question.isCorrect())
-        {
-            answer = question;
-            return true;
-        }
-        else
-            return false;
-    }
-    else
-    {
-        for (int num =1; num<=9; ++num)
-        {
-            question.map[firstZero]=num;
-            if(solve(question,answer))
-                return true;
-        }
-    return false;
-    }
 }
 
 bool Sudoku::check_and_generate_info()

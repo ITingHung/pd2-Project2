@@ -130,6 +130,7 @@ void MainWindow::clickedslot(int buttonnum)
 void MainWindow::lebu_clickedslot(int lebunum)
 {
     constlebunum = lebunum;
+    if (lebunum != 5)
     customize = false;
 
     //Setup the whole map tp 0
@@ -453,30 +454,34 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::set_iniColor()
  {
-     QPalette pal;
+     QPalette pal,palgray;
      pal.setColor(QPalette::Button, QColor(Qt::white));
+     palgray.setColor(QPalette::Button, QColor(Qt::gray));
      button[constbuttonnum]->setPalette(pal);
      if (constbuttonnum%9==3 || constbuttonnum%9==4 || constbuttonnum%9==5)
      {
          if(constbuttonnum<27 || constbuttonnum>54)
          {
-             pal.setColor(QPalette::Button, QColor(Qt::gray));
-             button[constbuttonnum]->setPalette(pal);
+             button[constbuttonnum]->setPalette(palgray);
          }
      }
      if (constbuttonnum/9==3 || constbuttonnum/9==4 || constbuttonnum/9==5)
      {
          if(constbuttonnum%9==0 || constbuttonnum%9==1 || constbuttonnum%9==2 || constbuttonnum%9==6 || constbuttonnum%9==7 || constbuttonnum%9==8)
          {
-             pal.setColor(QPalette::Button, QColor(Qt::gray));
-             button[constbuttonnum]->setPalette(pal);
+             button[constbuttonnum]->setPalette(palgray);
          }
      }
 
-     for(int i=0; i<5; ++i)
+     for(int i=0; i<6; ++i)
      {
          if(i!=constlebunum)
             levelbu[i]->setPalette(pal);
+     }
+
+     for(int i=0;i<2;i++)
+     {
+         custobu[i]->setPalette(pal);
      }
 
      for(int i=0; i<2; ++i)
